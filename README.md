@@ -4,17 +4,27 @@ The TNO MPC lab consists of generic software components, procedures, and functio
 
 The package tno.mpc.encryption_schemes.utils is part of the TNO Python Toolbox.
 
-*Remark: This cryptography software may not be used in applications that violate international export control legislations.*
+*Limitations in (end-)use: the content of this software package may solely be used for applications that comply with international export control laws.*
 
 ## Documentation
 
-Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.2.4).
+Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.6.1).
 
 ## Install
 
 Easily install the tno.mpc.encryption_schemes.utils package using pip:
 ```console
 $ python -m pip install tno.mpc.encryption_schemes.utils
+```
+
+If you wish to use `numpy` you can use:
+```console
+$ python -m pip install 'tno.mpc.encryption_schemes.utils[numpy]'
+```
+
+If you wish to run the tests you can use:
+```console
+$ python -m pip install 'tno.mpc.encryption_schemes.utils[tests]'
 ```
 
 ### Note:

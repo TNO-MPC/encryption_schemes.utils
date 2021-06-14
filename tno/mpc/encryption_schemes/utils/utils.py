@@ -4,6 +4,7 @@ Useful functions for creating encryption schemes.
 
 from math import gcd
 from typing import Tuple
+
 import sympy
 
 # Import gmpy2 to improve efficiency (for larger integers), if available.
@@ -19,10 +20,15 @@ def randprime(low: int, high: int) -> int:
     """
     Generate a random prime number in the range [low, high). Returns GMPY2 MPZ integer if available.
 
-    :param low: Lower bound (incluse) of the range.
+    :param low: Lower bound (inclusive) of the range.
     :param high: Upper bound (exclusive) of the range.
     :return: Random prime number.
+    :raise ValueError: the lower bound should be strictly lower than the upper bound
     """
+    if low >= high:
+        raise ValueError(
+            "the lower bound should be smaller or equal to the upper bound"
+        )
     if USE_GMPY2:
         return gmpy2.mpz(sympy.ntheory.generate.randprime(low, high))
     # else
@@ -54,6 +60,7 @@ def mod_inv(value: int, modulus: int) -> int:
     :raise ZeroDivisionError: Raised when the inverse of the value does not exist.
     :return: The inverse of a under the modulus.
     """
+    value %= modulus
     if USE_GMPY2:
         return gmpy2.invert(value, modulus)
     # else
