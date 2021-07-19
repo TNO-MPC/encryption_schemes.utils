@@ -1,10 +1,16 @@
 """
 File containing test input for test_fixed_point.py
 """
-
 import numpy as np
 
 from tno.mpc.encryption_schemes.utils.fixed_point import FixedPoint
+
+try:
+    import gmpy2
+
+    USE_GMPY2 = True
+except ImportError:
+    USE_GMPY2 = False
 
 fxp = FixedPoint.fxp
 
@@ -71,6 +77,14 @@ int_params = [
     (np.int64(-12345), None, FixedPoint(-12345, 0)),
     (np.int64(-12345), 3, FixedPoint(-12345000, 3)),
 ]
+
+if USE_GMPY2:
+    int_params += [
+        (gmpy2.mpz(1), None, FixedPoint(1, 0)),
+        (gmpy2.mpz(1), 2, FixedPoint(100, 2)),
+        (gmpy2.mpz(-12345), None, FixedPoint(-12345, 0)),
+        (gmpy2.mpz(-12345), 3, FixedPoint(-12345000, 3)),
+    ]
 
 float_params = [
     (0.00123, None, FixedPoint(123, 5)),

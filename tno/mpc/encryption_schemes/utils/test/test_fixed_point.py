@@ -47,9 +47,9 @@ def test_initiation_from_wrong_type(value: Any) -> None:
 @pytest.mark.parametrize("value, precision, true_fxp", int_params)
 def test_initiation_from_int(value: int, precision: int, true_fxp: FixedPoint) -> None:
     """
-    Test whether FixedPoint.fxp works properly for integer input
+    Test whether FixedPoint.fxp works properly for integer types
 
-    :param value: integer value
+    :param value: integer value of type mpz
     :param precision: desired precision
     :param true_fxp: correct result
     """
