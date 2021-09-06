@@ -300,6 +300,13 @@ round_list = [
     (1234567, 5, 1, 123),
 ]
 
+to_bool_params = [
+    (FixedPoint(0, 0), False),
+    (FixedPoint(0, 3), False),
+    (FixedPoint(123, 1), True),
+    (FixedPoint(-345, 5), True),
+]
+
 to_int_params = [
     (FixedPoint(100, 0), 100),
     (FixedPoint(100, 3), 0),

@@ -320,6 +320,14 @@ class FixedPoint:
             sign + pos_string[: -self.precision] + "." + pos_string[-self.precision :]
         )
 
+    def __bool__(self) -> bool:
+        """
+        Function that casts a fixed point object to a boolean.
+
+        :return: A bool representing whether the fixed point object is unequal to zero.
+        """
+        return bool(self.value)
+
     def __int__(self) -> int:
         """
         Function that casts a fixed point object to an integer.

@@ -24,6 +24,7 @@ from tno.mpc.encryption_schemes.utils.test.fixed_point_test_parameters import (
     string_params,
     sub_add_mul_div_list_wrong_type,
     subtraction_list,
+    to_bool_params,
     to_float_params,
     to_int_params,
     wrong_string_params,
@@ -421,6 +422,18 @@ def test_to_string(input_value: FixedPoint, correct_output: str) -> None:
     :param correct_output: correct representation of the fixed-point number
     """
     output = str(input_value)
+    assert output == correct_output
+
+
+@pytest.mark.parametrize("input_value, correct_output", to_bool_params)
+def test_to_bool(input_value: FixedPoint, correct_output: bool) -> None:
+    """
+    Test whether the __bool__ function works correctly
+
+    :param input_value: fixed-point number
+    :param correct_output: correct bool cast of the fixed-point number
+    """
+    output = bool(input_value)
     assert output == correct_output
 
 
