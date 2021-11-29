@@ -4,11 +4,12 @@ The TNO MPC lab consists of generic software components, procedures, and functio
 
 The package tno.mpc.encryption_schemes.utils is part of the TNO Python Toolbox.
 
-*Limitations in (end-)use: the content of this software package may solely be used for applications that comply with international export control laws.*
+*Limitations in (end-)use: the content of this software package may solely be used for applications that comply with international export control laws.*  
+*This implementation of cryptographic software has not been audited. Use at your own risk.*
 
 ## Documentation
 
-Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.7.0).
+Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.7.5).
 
 ## Install
 

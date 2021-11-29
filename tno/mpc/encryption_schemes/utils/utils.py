@@ -7,13 +7,10 @@ from typing import Tuple
 
 import sympy
 
-# Import gmpy2 to improve efficiency (for larger integers), if available.
-try:
-    import gmpy2
+from ._check_gmpy2 import USE_GMPY2
 
-    USE_GMPY2 = True
-except ImportError:
-    USE_GMPY2 = False
+if USE_GMPY2:
+    import gmpy2
 
 
 def randprime(low: int, high: int) -> int:

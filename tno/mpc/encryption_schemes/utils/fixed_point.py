@@ -9,13 +9,6 @@ import numbers
 from secrets import randbelow
 from typing import Optional, Tuple, Union
 
-try:
-    import gmpy2
-
-    SUPPORT_GMPY2 = True
-except ImportError:
-    SUPPORT_GMPY2 = False
-
 # Add numpy support, if available.
 try:
     import numpy as np
@@ -23,10 +16,6 @@ try:
     SUPPORT_NUMPY = True
 except ImportError:
     SUPPORT_NUMPY = False
-
-# register mpz as integer
-if SUPPORT_GMPY2:
-    numbers.Integral.register(type(gmpy2.mpz(0)))
 
 FxpInputType = Union["FixedPoint", numbers.Integral, str, float]
 

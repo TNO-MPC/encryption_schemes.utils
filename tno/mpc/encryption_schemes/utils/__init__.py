@@ -5,11 +5,11 @@ Useful functions for creating encryption schemes.
 # Explicit re-export of all functionalities, such that they can be imported properly. Following
 # https://www.python.org/dev/peps/pep-0484/#stub-files and
 # https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-no-implicit-reexport
-import platform
 import sys
 import warnings
 from typing import Optional, TextIO, Type, Union
 
+from ._check_gmpy2 import USE_GMPY2 as USE_GMPY2
 from .fixed_point import FixedPoint as FixedPoint
 from .utils import lcm as lcm
 from .utils import mod_inv as mod_inv
@@ -38,14 +38,4 @@ def custom_showwarning(  # pylint: disable=useless-type-doc
 
 warnings.showwarning = custom_showwarning  # type: ignore[assignment]
 
-try:
-    import gmpy2
-except ImportError:
-    if platform.system() != "Windows":
-        warnings.warn(
-            "GMPY2 is not installed, however a significant performance improvement can be "
-            "achieved by installing the GMPY2 library: "
-            "'python -m pip install 'tno.mpc.encryption_schemes.utils[gmpy2]'",
-        )
-
-__version__ = "0.7.0"
+__version__ = "0.7.5"

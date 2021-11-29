@@ -10,8 +10,8 @@ from typing import Any, List
 import pytest
 from sympy import isprime
 
+from tno.mpc.encryption_schemes.utils._check_gmpy2 import USE_GMPY2
 from tno.mpc.encryption_schemes.utils.utils import (
-    USE_GMPY2,
     extended_euclidean,
     lcm,
     mod_inv,
@@ -184,7 +184,7 @@ def test_pow_mod_prime(value: int, power: int, modulus: int) -> None:
 @pytest.mark.parametrize(
     "value, power, modulus",
     [
-        (prime, randint(-prime, 0), prime ** randint(2, 10))
+        (prime, randint(-prime + 1, -1), prime ** randint(2, 10))
         for prime in [randprime(3, 2 ** 20) for _ in range(100)]
     ],
 )
