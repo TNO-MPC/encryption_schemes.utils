@@ -11,6 +11,7 @@ from typing import Optional, TextIO, Type, Union
 
 from ._check_gmpy2 import USE_GMPY2 as USE_GMPY2
 from .fixed_point import FixedPoint as FixedPoint
+from .utils import is_prime as is_prime
 from .utils import lcm as lcm
 from .utils import mod_inv as mod_inv
 from .utils import pow_mod as pow_mod
@@ -38,4 +39,4 @@ def custom_showwarning(  # pylint: disable=useless-type-doc
 
 warnings.showwarning = custom_showwarning  # type: ignore[assignment]
 
-__version__ = "0.7.5"
+__version__ = "0.8.0"

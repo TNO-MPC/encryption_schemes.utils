@@ -20,6 +20,10 @@ except ImportError:
 
 from packaging.specifiers import SpecifierSet
 
+SPECIFIER_OPERATOR = "===|==|!=|~=|<=|>=|<|>"
+SPECIFIER_REGEX = f"(?:{SPECIFIER_OPERATOR})\s*[\w\.\*]*"
+SPECIFIER_SET_REGEX = f"(?:{SPECIFIER_REGEX})(?:[\s,]*{SPECIFIER_REGEX})*"
+
 # Import gmpy2 to improve efficiency (for larger integers), if available.
 gmpy2_version: Optional[
     Union[packaging.version.Version, packaging.version.LegacyVersion]
@@ -36,18 +40,17 @@ except PackageNotFoundError:
 USE_GMPY2 = False
 if gmpy2_version is not None:
     deps = ";".join(requires(".".join(__name__.split(".")[:-1])))  # type: ignore[arg-type]
-    gmpy2_spec_pattern_1 = re.compile("gmpy2([^;]*)")
-    gmpy2_spec_pattern_2 = re.compile("gmpy2 \(([^;]*)\)")
-    gmpy2_spec_match = gmpy2_spec_pattern_2.search(deps) or gmpy2_spec_pattern_1.search(
-        deps
+    gmpy2_spec_pattern = re.compile(
+        f"gmpy2[^=~!<>]*?(?P<specs>({SPECIFIER_SET_REGEX}))"
     )
+    gmpy2_spec_match = gmpy2_spec_pattern.search(deps)
     if gmpy2_spec_match is None:
         raise ValueError(f"Failed to extract optional gmpy2 version specifiers.")
-    gmpy2_spec = SpecifierSet(gmpy2_spec_match.group(1))
+    gmpy2_spec = SpecifierSet(gmpy2_spec_match.group("specs"))
     if gmpy2_version in gmpy2_spec:
         USE_GMPY2 = True
     else:
         warnings.warn(
-            f"Efficiency gain is supported for gmpy2{gmpy2_spec}. Detected gmpy2 version"
+            f"Efficiency gain is supported for gmpy2{gmpy2_spec}. Detected gmpy2 version "
             f"{gmpy2_version}. Fallback to non-gmpy2 support."
         )

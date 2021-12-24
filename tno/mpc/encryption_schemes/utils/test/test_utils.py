@@ -13,6 +13,7 @@ from sympy import isprime
 from tno.mpc.encryption_schemes.utils._check_gmpy2 import USE_GMPY2
 from tno.mpc.encryption_schemes.utils.utils import (
     extended_euclidean,
+    is_prime,
     lcm,
     mod_inv,
     pow_mod,
@@ -217,3 +218,26 @@ def test_extended_euclidean(value_1: int, value_2: int) -> None:
     gcd_inputs, value_1_mult, value_2_mult = extended_euclidean(value_1, value_2)
     assert gcd_inputs == gcd(value_1, value_2)
     assert value_1_mult * value_1 + value_2_mult * value_2 == gcd_inputs
+
+
+@pytest.mark.parametrize(
+    "low, high",
+    # random intervals
+    [
+        (rand_low, rand_low + randint(0, 2 ** 100))
+        for rand_low in [randint(0, 2 ** 100) for _ in range(100)]
+    ],
+)
+def test_primality_check_primes(low: int, high: int) -> None:
+    prime = randprime(low, high)
+    assert is_prime(prime)
+
+
+@pytest.mark.parametrize(
+    "number",
+    # random number
+    list(randint(0, 2 ** 100) for _ in range(100)),
+)
+def test_primality_check_random_number(number: int) -> None:
+    # compare the custom is_prime function with the sympy.isprime function
+    assert isprime(number) == is_prime(number)

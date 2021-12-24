@@ -97,3 +97,16 @@ def lcm(num_a: int, num_b: int) -> int:
         return gmpy2.lcm(num_a, num_b)
     # else
     return num_a * num_b // gcd(num_a, num_b)
+
+
+def is_prime(number: int) -> bool:
+    """
+    Check if the input number is a prime number. Uses GMPY2 if available
+
+    :param number: The number to check
+    :return: Whether the input is prime or not
+    """
+    if USE_GMPY2:
+        return gmpy2.mpz(number).is_prime()
+    # else
+    return sympy.isprime(number)
