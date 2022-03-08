@@ -459,3 +459,33 @@ def test_to_float(input_value: FixedPoint, correct_output: float) -> None:
     """
     output = float(input_value)
     assert output == correct_output
+
+
+@pytest.mark.parametrize("input_value", list(range(-10, 10)))
+@pytest.mark.parametrize("precision", list(range(8)))
+@pytest.mark.parametrize("bits", list(range(8)))
+def test_right_bitshift(input_value: int, precision: int, bits: int) -> None:
+    """
+    Test the right bit shift operator
+
+    :param input_value: input to shift
+    :param precision: location of the radix, number of decimals
+    :param bits: number of bits to shift
+    """
+    value = fxp(input_value, precision)
+    assert abs((value >> bits) - (value / 2**bits)) <= 10**-precision
+
+
+@pytest.mark.parametrize("input_value", list(range(-10, 10)))
+@pytest.mark.parametrize("precision", list(range(8)))
+@pytest.mark.parametrize("bits", list(range(8)))
+def test_left_bitshift(input_value: int, precision: int, bits: int) -> None:
+    """
+    Test the left bit shift operator
+
+    :param input_value: input to shift
+    :param precision: location of the radix, number of decimals
+    :param bits: number of bits to shift
+    """
+    value = fxp(input_value, precision)
+    assert value << bits == value * 2**bits

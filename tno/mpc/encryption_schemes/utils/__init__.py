@@ -14,6 +14,7 @@ from .fixed_point import FixedPoint as FixedPoint
 from .utils import is_prime as is_prime
 from .utils import lcm as lcm
 from .utils import mod_inv as mod_inv
+from .utils import next_prime as next_prime
 from .utils import pow_mod as pow_mod
 from .utils import randprime as randprime
 
@@ -39,4 +40,4 @@ def custom_showwarning(  # pylint: disable=useless-type-doc
 
 warnings.showwarning = custom_showwarning  # type: ignore[assignment]
 
-__version__ = "0.8.0"
+__version__ = "0.10.4"

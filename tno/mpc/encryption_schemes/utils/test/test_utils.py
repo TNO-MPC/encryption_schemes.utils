@@ -16,12 +16,42 @@ from tno.mpc.encryption_schemes.utils.utils import (
     is_prime,
     lcm,
     mod_inv,
+    next_prime,
     pow_mod,
     randprime,
 )
 
 if USE_GMPY2:
     from gmpy2 import mpz
+
+small_primes = [
+    2,
+    3,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    29,
+    31,
+    37,
+    41,
+    43,
+    47,
+    53,
+    59,
+    61,
+    67,
+    71,
+    73,
+    79,
+    83,
+    89,
+    97,
+    101,
+]
 
 
 def prod(list_: List[Any]) -> Any:
@@ -38,8 +68,8 @@ def prod(list_: List[Any]) -> Any:
     "low, high",
     # random intervals
     [
-        (rand_low, rand_low + randint(0, 2 ** 100))
-        for rand_low in [randint(0, 2 ** 100) for _ in range(100)]
+        (rand_low, rand_low + randint(0, 2**100))
+        for rand_low in [randint(0, 2**100) for _ in range(100)]
     ],
 )
 def test_randprime_regular_behaviour(low: int, high: int) -> None:
@@ -64,8 +94,8 @@ def test_randprime_regular_behaviour(low: int, high: int) -> None:
     "low, high",
     # random intervals
     [
-        (rand_low, rand_low - randint(0, 2 ** 100))
-        for rand_low in [randint(0, 2 ** 100) for _ in range(100)]
+        (rand_low, rand_low - randint(0, 2**100))
+        for rand_low in [randint(0, 2**100) for _ in range(100)]
     ],
 )
 def test_randprime_wrong_input(low: int, high: int) -> None:
@@ -79,6 +109,32 @@ def test_randprime_wrong_input(low: int, high: int) -> None:
     """
     with pytest.raises(ValueError):
         _ = randprime(low, high)
+
+
+@pytest.mark.parametrize("low", list(range(0, 100)))
+def test_next_prime(low: int) -> None:
+    """
+    Test to check whether the next_prime function indeed generates the next prime number. Also verifies if the mpz type
+    is used when available.
+
+    :param low: lower bound for the prime number
+    """
+    prime = next_prime(low)
+
+    # check type correctness
+    if USE_GMPY2:
+        assert isinstance(prime, type(mpz(0)))
+    else:
+        assert isinstance(prime, int)
+
+    # verify generated prime is indeed prime
+    assert prime in small_primes
+    # verify that this was indeed the first prime greater than the given lower bound
+    prime_index = small_primes.index(prime)
+    if prime_index == 0:
+        assert low < prime
+    else:
+        assert small_primes[prime_index - 1] <= low < prime
 
 
 @pytest.mark.parametrize(
@@ -97,9 +153,9 @@ def test_lcm(nr_of_primes: int) -> None:
     """
     primes = []
     for i in range(nr_of_primes):
-        new_prime = randprime(1, 2 ** 100)
+        new_prime = randprime(1, 2**100)
         while new_prime in primes:
-            new_prime = randprime(1, 2 ** 100)
+            new_prime = randprime(1, 2**100)
         primes.append(new_prime)
 
     powers_1 = [randint(0, 100) for _ in range(nr_of_primes)]
@@ -117,7 +173,7 @@ def test_lcm(nr_of_primes: int) -> None:
 
 @pytest.mark.parametrize(
     "value, inverse",
-    [(randint(2, 2 ** 1024), randint(2, 2 ** 1024)) for _ in range(100)],
+    [(randint(2, 2**1024), randint(2, 2**1024)) for _ in range(100)],
 )
 def test_mod_inv_invertible(value: int, inverse: int) -> None:
     """
@@ -140,9 +196,9 @@ def test_mod_inv_invertible(value: int, inverse: int) -> None:
     "value, modulus",
     [
         (prime, prime ** randint(3, 10))
-        for prime in [randprime(3, 2 ** 100) for _ in range(100)]
+        for prime in [randprime(3, 2**100) for _ in range(100)]
     ]
-    + [(0, prime) for prime in [randprime(3, 2 ** 100) for _ in range(100)]],
+    + [(0, prime) for prime in [randprime(3, 2**100) for _ in range(100)]],
 )
 def test_mod_inv_not_invertible(value: int, modulus: int) -> None:
     """
@@ -160,7 +216,7 @@ def test_mod_inv_not_invertible(value: int, modulus: int) -> None:
     "value, power, modulus",
     [
         (randint(1, mod - 1) * (randint(0, 1) * 2 - 1), randint(-mod, mod), mod)
-        for mod in [randprime(3, 2 ** 20) for _ in range(100)]
+        for mod in [randprime(3, 2**20) for _ in range(100)]
     ],
 )
 def test_pow_mod_prime(value: int, power: int, modulus: int) -> None:
@@ -172,13 +228,13 @@ def test_pow_mod_prime(value: int, power: int, modulus: int) -> None:
     :param power: the exponent
     :param modulus: the modulus
     """
+    utils_value = pow_mod(value, power, modulus)
     correct_value = 1
     if power < 0:
         value = mod_inv(value, modulus)
         power = -power
     for _ in range(power):
         correct_value = (correct_value * value) % modulus
-    utils_value = pow_mod(value, power, modulus)
     assert utils_value == correct_value
 
 
@@ -186,7 +242,7 @@ def test_pow_mod_prime(value: int, power: int, modulus: int) -> None:
     "value, power, modulus",
     [
         (prime, randint(-prime + 1, -1), prime ** randint(2, 10))
-        for prime in [randprime(3, 2 ** 20) for _ in range(100)]
+        for prime in [randprime(3, 2**20) for _ in range(100)]
     ],
 )
 def test_pow_mod_prime_power(value: int, power: int, modulus: int) -> None:
@@ -198,13 +254,14 @@ def test_pow_mod_prime_power(value: int, power: int, modulus: int) -> None:
     :param power: the exponent
     :param modulus: the modulus
     """
-    with pytest.raises(ValueError):
+    with pytest.raises((ValueError, ZeroDivisionError)) as error:
         _ = pow_mod(value, power, modulus)
+    assert "invertible" in str(error.value) or "Inverse" in str(error.value)
 
 
 @pytest.mark.parametrize(
     "value_1, value_2",
-    [(randint(3, 2 ** 100), randint(3, 2 ** 100)) for _ in range(100)],
+    [(randint(3, 2**100), randint(3, 2**100)) for _ in range(100)],
 )
 def test_extended_euclidean(value_1: int, value_2: int) -> None:
     """
@@ -224,20 +281,50 @@ def test_extended_euclidean(value_1: int, value_2: int) -> None:
     "low, high",
     # random intervals
     [
-        (rand_low, rand_low + randint(0, 2 ** 100))
-        for rand_low in [randint(0, 2 ** 100) for _ in range(100)]
+        (rand_low, rand_low + randint(0, 2**100))
+        for rand_low in [randint(0, 2**100) for _ in range(100)]
     ],
 )
 def test_primality_check_primes(low: int, high: int) -> None:
+    """
+    Test to determine that generated primes are actually prime.
+
+    :param low: Lower bound (inclusive) of range in which to generate a prime.
+    :param high: Higher bound (exclusive) of range in which to generate a prime.
+    """
     prime = randprime(low, high)
     assert is_prime(prime)
 
 
 @pytest.mark.parametrize(
+    "low, high",
+    # random intervals
+    [
+        (rand_low, rand_low + randint(0, 2**100))
+        for rand_low in [randint(0, 2**100) for _ in range(100)]
+    ],
+)
+def test_no_negative_primes(low: int, high: int) -> None:
+    """
+    Test to determine that negative primes are not seen as primes. In this case negative primes are negations of real
+    primes.
+
+    :param low: Lower bound (inclusive) of range in which to generate a real prime.
+    :param high: Higher bound (exclusive) of range in which to generate a real prime.
+    """
+    prime = randprime(low, high)
+    assert not is_prime(-prime)
+
+
+@pytest.mark.parametrize(
     "number",
     # random number
-    list(randint(0, 2 ** 100) for _ in range(100)),
+    list(randint(-(2**100), 2**100) for _ in range(100)),
 )
 def test_primality_check_random_number(number: int) -> None:
-    # compare the custom is_prime function with the sympy.isprime function
+    """
+    Test to check if the custom is_prime method gives the same results as they sympy.isprime method.
+
+    :param number: Number to check for primality.
+    """
     assert isprime(number) == is_prime(number)

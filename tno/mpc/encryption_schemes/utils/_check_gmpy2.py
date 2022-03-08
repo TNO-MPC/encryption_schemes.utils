@@ -21,8 +21,8 @@ except ImportError:
 from packaging.specifiers import SpecifierSet
 
 SPECIFIER_OPERATOR = "===|==|!=|~=|<=|>=|<|>"
-SPECIFIER_REGEX = f"(?:{SPECIFIER_OPERATOR})\s*[\w\.\*]*"
-SPECIFIER_SET_REGEX = f"(?:{SPECIFIER_REGEX})(?:[\s,]*{SPECIFIER_REGEX})*"
+SPECIFIER_REGEX = rf"(?:{SPECIFIER_OPERATOR})\s*[\w\.\*]*"
+SPECIFIER_SET_REGEX = rf"(?:{SPECIFIER_REGEX})(?:[\s,]*{SPECIFIER_REGEX})*"
 
 # Import gmpy2 to improve efficiency (for larger integers), if available.
 gmpy2_version: Optional[
@@ -39,13 +39,13 @@ except PackageNotFoundError:
 
 USE_GMPY2 = False
 if gmpy2_version is not None:
-    deps = ";".join(requires(".".join(__name__.split(".")[:-1])))  # type: ignore[arg-type]
+    DEPS = ";".join(requires(".".join(__name__.split(".")[:-1])))  # type: ignore[arg-type]
     gmpy2_spec_pattern = re.compile(
         f"gmpy2[^=~!<>]*?(?P<specs>({SPECIFIER_SET_REGEX}))"
     )
-    gmpy2_spec_match = gmpy2_spec_pattern.search(deps)
+    gmpy2_spec_match = gmpy2_spec_pattern.search(DEPS)
     if gmpy2_spec_match is None:
-        raise ValueError(f"Failed to extract optional gmpy2 version specifiers.")
+        raise ValueError("Failed to extract optional gmpy2 version specifiers.")
     gmpy2_spec = SpecifierSet(gmpy2_spec_match.group("specs"))
     if gmpy2_version in gmpy2_spec:
         USE_GMPY2 = True

@@ -2,6 +2,7 @@
 Useful functions for creating encryption schemes.
 """
 
+import sys
 from math import gcd
 from typing import Tuple
 
@@ -11,6 +12,10 @@ from ._check_gmpy2 import USE_GMPY2
 
 if USE_GMPY2:
     import gmpy2
+
+USE_ALTERNATIVE_POW_MOD = sys.version_info.major < 3 or (
+    sys.version_info.major == 3 and sys.version_info.minor < 8
+)
 
 
 def randprime(low: int, high: int) -> int:
@@ -32,6 +37,19 @@ def randprime(low: int, high: int) -> int:
     return sympy.ntheory.generate.randprime(low, high)
 
 
+def next_prime(low: int) -> int:
+    """
+    Generate the first prime number greater than the given value. Returns GMPY2 MPZ integer if available.
+
+    :param low: Lower bound for the prime.
+    :return: First prime number strictly greater than low.
+    """
+    if USE_GMPY2:
+        return gmpy2.next_prime(low)
+    # else
+    return sympy.ntheory.generate.nextprime(low)
+
+
 def pow_mod(base: int, exponent: int, modulus: int) -> int:
     """
     Compute base**exponent % modulus. Uses GMPY2 if available.
@@ -43,6 +61,8 @@ def pow_mod(base: int, exponent: int, modulus: int) -> int:
     """
     if USE_GMPY2:
         return gmpy2.powmod(base, exponent, modulus)
+    if USE_ALTERNATIVE_POW_MOD and exponent < 0:
+        return pow(mod_inv(base, modulus), -exponent, modulus)
     # else
     return pow(base, exponent, modulus)
 
@@ -107,6 +127,6 @@ def is_prime(number: int) -> bool:
     :return: Whether the input is prime or not
     """
     if USE_GMPY2:
-        return gmpy2.mpz(number).is_prime()
+        return gmpy2.is_prime(number)
     # else
     return sympy.isprime(number)

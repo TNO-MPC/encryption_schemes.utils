@@ -42,7 +42,7 @@ class FixedPoint:
     A fixed-point number is defined by 2 integers:
 
     - value: an arbitrary-precision integer
-    - precision: an integer indicating the position of the dot which separates the integer part
+    - precision: an integer indicating the position of the radix which separates the integer part
       from the fractional part (counting from the right)
 
     Fixed-point numbers can be instantiated from strings, integers, floats and other fixed-points.
@@ -64,6 +64,9 @@ class FixedPoint:
         "value",
         "precision",
     )
+
+    value: int
+    precision: int
 
     DEFAULT_FLOAT_PRECISION = 16
 
@@ -122,7 +125,7 @@ class FixedPoint:
         Initialise the fixed point number.
 
         :param value: The arbitrary-precision integer value representing the fixed point number
-        :param precision: The location of the dot, counting from the right
+        :param precision: The location of the radix, counting from the right
         """
         self.value = value
         assert precision >= 0
@@ -154,7 +157,7 @@ class FixedPoint:
             if power < 0:
                 result = FixedPoint(left_side.value, left_side.precision - power)
             else:
-                result = FixedPoint(left_side.value * 10 ** power, left_side.precision)
+                result = FixedPoint(left_side.value * 10**power, left_side.precision)
             return FixedPoint.fxp(result, precision)
 
         split = input_value.split(".")
@@ -173,7 +176,7 @@ class FixedPoint:
                 ) from format_error
             if precision is None:
                 return FixedPoint(value, 0)
-            return FixedPoint(value * 10 ** precision, precision)
+            return FixedPoint(value * 10**precision, precision)
 
         # If the format is <integer>.<fractional>, determine whether the fractional part gives the
         # right precision. Correct the value if the precisions do not match.
@@ -184,7 +187,7 @@ class FixedPoint:
             # determine the precision of the fractional part
             input_precision = len(right)
             if precision is not None:
-                dot_from_right = precision
+                radix_from_right = precision
                 assert precision >= 0
                 difference = precision - input_precision
                 if difference >= 0:
@@ -198,9 +201,9 @@ class FixedPoint:
                         value_int, input_precision, precision
                     )
             else:
-                dot_from_right = input_precision
+                radix_from_right = input_precision
                 value = int(value_str)
-            return FixedPoint(value, dot_from_right)
+            return FixedPoint(value, radix_from_right)
 
         # Raise an error if the input_value does not have the right format
         raise ValueError(
@@ -216,12 +219,12 @@ class FixedPoint:
         If the input_value is an integer, we set the integer value to the input_value and decimal to zero.
 
         :param input_value: the input_value integer
-        :param precision: position of the dot, counting from the right
+        :param precision: position of the radix, counting from the right
         :return: the resulting fixed-point number
         """
         if precision is None:
             return FixedPoint(int(input_value), 0)
-        return FixedPoint(int(input_value * 10 ** precision), precision)
+        return FixedPoint(int(input_value * 10**precision), precision)
 
     @staticmethod
     def initiate_from_float(
@@ -267,11 +270,11 @@ class FixedPoint:
 
     @staticmethod
     def calibrate(*fixed_points: FixedPoint) -> Tuple[int, Tuple[FixedPoint, ...]]:
-        """
+        r"""
         Function that determines that maximum precision among all the fixed points and scales
         the fixed points according to the maximum precision.
 
-        :param fixed_points: fixed point numbers
+        :param \*fixed_points: fixed point numbers
         :return: A tuple where the first entry is the maximum precision and the subsequent entries
             are the given fixed points scaled to this maximum precision.
         """
@@ -291,8 +294,8 @@ class FixedPoint:
 
     def __str__(self) -> str:
         """
-        Function that casts a fixed point object to a string. First a representation without a dot
-        is found and then the dot is inserted in the right place if the fixed point is not integer.
+        Function that casts a fixed point object to a string. First a representation without a radix
+        is found and then the radix is inserted in the right place if the fixed point is not integer.
 
         :return: A string representing the fixed point object
         """
@@ -333,7 +336,7 @@ class FixedPoint:
 
         :return: A floating point number representing the fixed point object
         """
-        return float(self.value) / float(10 ** self.precision)
+        return float(self.value) / float(10**self.precision)
 
     def __eq__(self, other: object) -> bool:
         """
@@ -541,7 +544,7 @@ class FixedPoint:
         scaled_value: int = pre_scaled_value // 10
         # if we only truncate zeroes, we do not need any corrections
         correction: int = int(round_away_from_zero)
-        if scaled_value * 10 ** to_reduce_by == abs_value:
+        if scaled_value * 10**to_reduce_by == abs_value:
             correction = 0
 
         rounded_scaled_value = sign * (scaled_value + correction)
@@ -640,6 +643,26 @@ class FixedPoint:
                 "The compatible object types are string, integer, float and FixedPoint."
             )
         return FixedPoint.fxp(other).__truediv__(self)
+
+    def __rshift__(self, other: int) -> FixedPoint:
+        """
+        Right bit shift operation without moving the radix.
+        Shifts the underlying integer value, but does not modify the radix position.
+
+        :param other: number of bits to shift
+        :return: shifted fixed point
+        """
+        return FixedPoint(self.value >> other, self.precision)
+
+    def __lshift__(self, other: int) -> FixedPoint:
+        """
+        Left bit shift operation without moving the radix.
+        Shifts the underlying integer value, but does not modify the radix position
+
+        :param other: number of bits to shift
+        :return: shifted fixed point
+        """
+        return FixedPoint(self.value << other, self.precision)
 
     @staticmethod
     def random_range(

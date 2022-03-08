@@ -9,7 +9,7 @@ The package tno.mpc.encryption_schemes.utils is part of the TNO Python Toolbox.
 
 ## Documentation
 
-Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.8.0).
+Documentation of the tno.mpc.encryption_schemes.utils package can be found [here](https://docs.mpc.tno.nl/encryption_schemes/utils/0.10.4).
 
 ## Install
 

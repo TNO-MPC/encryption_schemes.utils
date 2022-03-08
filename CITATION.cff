@@ -18,6 +18,6 @@ contact:
 repository-code: https://github.com/TNO-MPC/encryption_schemes.utils
 repository-artifact: https://pypi.org/project/tno.mpc.encryption_schemes.utils
 title: TNO MPC Lab - Encryption Schemes - Utils
-version: v0.8.0
-date-released: 2021-12-24
+version: v0.10.4
+date-released: 2022-03-11
 
