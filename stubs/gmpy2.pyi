@@ -1,5 +1,5 @@
 # Partially based on https://github.com/microsoft/electionguard-python/blob/355b587ea9c4e80c9228183e5c2da68bc40f2afa/stubs/gmpy2.pyi
-from typing import Any, Optional, Text, Tuple, Union
+from typing import Any, Text, Tuple, Union
 
 class mpz(int):
     def __new__(

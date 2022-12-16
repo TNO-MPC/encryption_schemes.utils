@@ -40,4 +40,4 @@ def custom_showwarning(  # pylint: disable=useless-type-doc
 
 warnings.showwarning = custom_showwarning  # type: ignore[assignment]
 
-__version__ = "0.10.4"
+__version__ = "0.10.6"
