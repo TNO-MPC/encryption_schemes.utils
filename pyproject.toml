@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tno.mpc.encryption_schemes.utils"
+description = "Generic utilities for implementing encryption schemes"
+readme = "README.md"
+authors = [{name = "TNO MPC Lab", email = "mpclab@tno.nl"}]
+maintainers = [{name = "TNO MPC Lab", email = "mpclab@tno.nl"}]
+keywords = [
+    "TNO",
+    "MPC",
+    "multi-party computation",
+    "encryption schemes",
+    "utils",
+]
+license = {text = "Apache License, Version 2.0"}
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Typing :: Typed",
+    "Topic :: Security :: Cryptography",
+]
+urls = {Homepage = "https://mpc.tno.nl/", Documentation = "https://docs.mpc.tno.nl/encryption_schemes/utils/0.11.1", Source = "https://github.com/TNO-MPC/encryption_schemes.utils"}
+dynamic = ["version"]
+requires-python = ">=3.7"
+dependencies = [
+    "importlib_metadata; python_version<'3.8'",
+    "packaging",
+    "sympy~=1.3",
+]
+
+[project.optional-dependencies]
+gmpy = [
+    "gmpy2>=2.1.2",
+]
+numpy = [
+    "numpy",
+]
+tests = [
+    "numpy",
+    "pytest",
+]
+
+[tool.setuptools]
+platforms = ["any"]
+
+[tool.setuptools.dynamic]
+version = {attr = "tno.mpc.encryption_schemes.utils.__version__"}
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]
+

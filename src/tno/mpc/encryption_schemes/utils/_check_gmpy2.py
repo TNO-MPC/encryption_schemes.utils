@@ -36,7 +36,7 @@ except PackageNotFoundError:
 
 USE_GMPY2 = False
 if gmpy2_version is not None:
-    DEPS = ";".join(requires(".".join(__name__.split(".")[:-1])))  # type: ignore[arg-type]
+    DEPS = ";".join(requires("tno.mpc.encryption_schemes.utils"))  # type: ignore[arg-type]
     gmpy2_spec_pattern = re.compile(
         f"gmpy2[^=~!<>]*?(?P<specs>({SPECIFIER_SET_REGEX}))"
     )
