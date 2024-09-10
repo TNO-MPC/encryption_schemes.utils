@@ -2,13 +2,14 @@
 Useful functions for creating encryption schemes.
 """
 
+from __future__ import annotations
+
 import sys
 from math import gcd
-from typing import Tuple
 
 import sympy
 
-from ._check_gmpy2 import USE_GMPY2
+from tno.mpc.encryption_schemes.utils._check_gmpy2 import USE_GMPY2
 
 if USE_GMPY2:
     import gmpy2
@@ -87,7 +88,7 @@ def mod_inv(value: int, modulus: int) -> int:
     return inverse
 
 
-def extended_euclidean(num_a: int, num_b: int) -> Tuple[int, int, int]:
+def extended_euclidean(num_a: int, num_b: int) -> tuple[int, int, int]:
     """
     Perform the extended euclidean algorithm on the input numbers.
     The method returns gcd, x, y, such that a*x + b*y = gcd.

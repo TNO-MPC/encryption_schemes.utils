@@ -6,18 +6,12 @@ If gmpy2 is installed and the version is compliant with the current library,
 set USE_GMPY2 to True. Otherwise, USE_GMPY2 is False.
 """
 
-
 import re
-import sys
 import warnings
+from importlib.metadata import PackageNotFoundError, requires, version
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import parse
-
-if sys.version_info >= (3, 8):
-    from importlib.metadata import PackageNotFoundError, requires, version
-else:
-    from importlib_metadata import PackageNotFoundError, requires, version
 
 SPECIFIER_OPERATOR = "===|==|!=|~=|<=|>=|<|>"
 SPECIFIER_REGEX = rf"(?:{SPECIFIER_OPERATOR})\s*[\w\.\*]*"

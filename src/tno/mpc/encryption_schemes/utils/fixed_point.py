@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import numbers
 from secrets import randbelow
-from typing import Optional, Tuple, Union
+from typing import Any, Union
 
 # Add numpy support, if available.
 try:
@@ -18,6 +18,81 @@ except ImportError:
     SUPPORT_NUMPY = False
 
 FxpInputType = Union["FixedPoint", numbers.Integral, str, float]
+
+
+def _parse_exponential_notation(parts: list[str], precision: int | None) -> FixedPoint:
+    """
+    Parse a string in the format <left>e<right> to a FixedPoint.
+
+    :param parts: list of strings, where the first entry is the left side and the second part
+        is the right side
+    :param precision: desired precision
+    :return: the resulting fixed-point number
+    """
+    significand = FixedPoint.initiate_from_string(parts[0])
+    power = int(parts[1])
+    if power < 0:
+        result = FixedPoint(significand.value, significand.precision - power)
+    else:
+        result = FixedPoint(significand.value * 10**power, significand.precision)
+    return FixedPoint.fxp(result, precision)
+
+
+def _parse_integer_notation(left: str, precision: int | None) -> FixedPoint:
+    """
+    Parse a string in the format <integer> to a FixedPoint.
+
+    :param left: string representing the integer
+    :param precision: desired precision
+    :return: the resulting fixed-point number
+    """
+    try:
+        value = int(left)
+    except ValueError as format_error:
+        raise ValueError(
+            'The input value does not conform to the expected format "x.y" or "x" for '
+            "integers x and y"
+        ) from format_error
+    if precision is None:
+        return FixedPoint(value, 0)
+    return FixedPoint(value * 10**precision, precision)
+
+
+def _parse_fractional_notation(parts: list[str], precision: int | None) -> FixedPoint:
+    """
+    Parse a string in the format <integer>.<fractional> to
+    a FixedPoint.
+
+    Determines whether the fractional part gives the right precision. Corrects
+    the value if the precisions do not match.
+
+    :param parts: list of strings, where the first entry is the integer part and the second
+        part is the fractional part
+    :param precision: desired precision
+    :return: the resulting fixed-point number
+    """
+    left, right = parts
+    # combine the integer and fractional part into 1 big integer
+    value_str = left + right
+    # determine the precision of the fractional part
+    input_precision = len(right)
+    if precision is not None:
+        radix_from_right = precision
+        assert precision >= 0
+        difference = precision - input_precision
+        if difference >= 0:
+            # add (precision - input_precision) trailing zeroes
+            value_str += "0" * difference
+            value = int(value_str)
+        else:
+            # truncate the last (input_precision - precision) digits and round if necessary
+            value = FixedPoint.round_to_precision(
+                int(value_str), input_precision, precision
+            )
+    else:
+        radix_from_right = input_precision
+        value = int(value_str)
+    return FixedPoint(value, radix_from_right)
 
 
 class FixedPoint:
@@ -74,7 +149,7 @@ class FixedPoint:
     def fxp(
         cls,
         input_value: FxpInputType,
-        target_precision: Optional[int] = None,
+        target_precision: int | None = None,
     ) -> FixedPoint:
         """
         Create a fixed-point number from a string, int, float or fixed-point number with a specified
@@ -133,7 +208,7 @@ class FixedPoint:
 
     @staticmethod
     def initiate_from_string(
-        input_value: str, precision: Optional[int] = None
+        input_value: str, precision: int | None = None
     ) -> FixedPoint:
         """
         This is the most reliable way to instantiate a fixed point, as the string accurately
@@ -151,69 +226,24 @@ class FixedPoint:
         if " " in input_value:
             raise ValueError("It is not allowed to have spaces in the input")
         if "e" in input_value:
-            e_split = input_value.split("e")
-            left_side = FixedPoint.initiate_from_string(e_split[0])
-            power = int(e_split[1])
-            if power < 0:
-                result = FixedPoint(left_side.value, left_side.precision - power)
-            else:
-                result = FixedPoint(left_side.value * 10**power, left_side.precision)
-            return FixedPoint.fxp(result, precision)
+            return _parse_exponential_notation(input_value.split("e"), precision)
 
         split = input_value.split(".")
-        left = split[0]
         nr_entries = len(split)
 
-        # If the format is <integer>, parse the input as an int and call the initiation function
-        # for integers.
         if nr_entries == 1:
-            try:
-                value = int(left)
-            except ValueError as format_error:
-                raise ValueError(
-                    'The input value does not conform to the expect format "x.y" or "x" for '
-                    "integers x and y"
-                ) from format_error
-            if precision is None:
-                return FixedPoint(value, 0)
-            return FixedPoint(value * 10**precision, precision)
-
-        # If the format is <integer>.<fractional>, determine whether the fractional part gives the
-        # right precision. Correct the value if the precisions do not match.
+            return _parse_integer_notation(split[0], precision)
         if nr_entries == 2:
-            right = split[1]
-            # combine the integer and fractional part into 1 big integer
-            value_str = left + right
-            # determine the precision of the fractional part
-            input_precision = len(right)
-            if precision is not None:
-                radix_from_right = precision
-                assert precision >= 0
-                difference = precision - input_precision
-                if difference >= 0:
-                    # add (precision - input_precision) trailing zeroes
-                    value_str += "0" * difference
-                    value = int(value_str)
-                else:
-                    # truncate the last (input_precision - precision) digits and round if necessary
-                    value_int = int(value_str)
-                    value = FixedPoint.round_to_precision(
-                        value_int, input_precision, precision
-                    )
-            else:
-                radix_from_right = input_precision
-                value = int(value_str)
-            return FixedPoint(value, radix_from_right)
+            return _parse_fractional_notation(split, precision)
 
-        # Raise an error if the input_value does not have the right format
         raise ValueError(
-            'The input value does not conform to the expect format "x.y" or "x" '
+            'The input value does not conform to the expected format "x.y" or "x" '
             "for integers x and y"
         )
 
     @staticmethod
     def initiate_from_int(
-        input_value: numbers.Integral, precision: Optional[int] = None
+        input_value: numbers.Integral, precision: int | None = None
     ) -> FixedPoint:
         """
         If the input_value is an integer, we set the integer value to the input_value and decimal to zero.
@@ -224,11 +254,11 @@ class FixedPoint:
         """
         if precision is None:
             return FixedPoint(int(input_value), 0)
-        return FixedPoint(int(input_value * 10**precision), precision)
+        return FixedPoint(int(input_value) * 10**precision, precision)
 
     @staticmethod
     def initiate_from_float(
-        input_value: float, target_precision: Optional[int] = None
+        input_value: float, target_precision: int | None = None
     ) -> FixedPoint:
         """
         if the input value is a float, we multiply it by a power of 10 to create a scaled floating
@@ -244,7 +274,7 @@ class FixedPoint:
 
     @staticmethod
     def initiate_from_fxp(
-        input_value: FixedPoint, target_precision: Optional[int] = None
+        input_value: FixedPoint, target_precision: int | None = None
     ) -> FixedPoint:
         """
         If the input value is another fixed point, correct the value with respect to the target
@@ -269,7 +299,7 @@ class FixedPoint:
     # endregion
 
     @staticmethod
-    def calibrate(*fixed_points: FixedPoint) -> Tuple[int, Tuple[FixedPoint, ...]]:
+    def calibrate(*fixed_points: FixedPoint) -> tuple[int, tuple[FixedPoint, ...]]:
         r"""
         Function that determines that maximum precision among all the fixed points and scales
         the fixed points according to the maximum precision.
@@ -695,3 +725,40 @@ class FixedPoint:
             sign = randbelow(2) * 2 - 1
             value *= sign
         return FixedPoint(value, max_precision)
+
+    def serialize(self, **_kwargs: Any) -> dict[str, Any]:
+        r"""
+        Serialization function for FixedPoint.
+
+        :param \**_kwargs: Optional extra keyword arguments.
+        :return: Serialized representation of the current object.
+        """
+        return {
+            "value": self.value,
+            "precision": self.precision,
+        }
+
+    @staticmethod
+    def deserialize(obj: dict[str, Any], **_kwargs: Any) -> FixedPoint:
+        r"""
+        Deserialization function for FixedPoint.
+
+        :param obj: Object to deserialize.
+        :param \**_kwargs: Optional extra keyword arguments.
+        :return: Deserialized FixedPoint instance.
+        """
+        return FixedPoint(obj["value"], obj["precision"])
+
+
+# Check to see if the communication module is available
+try:
+    from tno.mpc.communication import Serialization
+
+    # `tno.mpc.protocols.secure_comparison` uses, but does not register, the
+    # serialization functions for `FixedPoint`.
+    Serialization.register_class(
+        FixedPoint,
+        overwrite=True,
+    )
+except ModuleNotFoundError:
+    pass

@@ -2,7 +2,9 @@
 This file contains tests that determine whether the code for fixed points works as expected.
 """
 
-from typing import Any, Callable, List
+from __future__ import annotations
+
+from typing import Any, Callable
 
 import pytest
 
@@ -116,7 +118,7 @@ def test_initiation_from_wrong_string(value: str) -> None:
 
 @pytest.mark.parametrize("value_list, correct_values", cal_list)
 def test_calibration(
-    value_list: List[FixedPoint], correct_values: List[FixedPoint]
+    value_list: list[FixedPoint], correct_values: list[FixedPoint]
 ) -> None:
     """
     Test to determine whether the FixedPoint.calibrate method works properly
@@ -147,6 +149,7 @@ def test_addition(
     sum_ = fxp(value_1) + fxp(value_2)
     sum_l = fxp(value_1) + value_2
     sum_r = value_1 + fxp(value_2)
+    assert isinstance(sum_r, FixedPoint)
     assert FixedPoint.strong_eq(sum_, correct_fxp)
     assert FixedPoint.strong_eq(sum_l, correct_fxp)
     assert FixedPoint.strong_eq(sum_r, correct_fxp)
@@ -188,6 +191,7 @@ def test_subtraction(
     sub_ = fxp(value_1) - fxp(value_2)
     sub_l = fxp(value_1) - value_2
     sub_r = value_1 - fxp(value_2)
+    assert isinstance(sub_r, FixedPoint)
     assert FixedPoint.strong_eq(sub_, correct_fxp)
     assert FixedPoint.strong_eq(sub_l, correct_fxp)
     assert FixedPoint.strong_eq(sub_r, correct_fxp)
@@ -239,6 +243,7 @@ def test_multiplication(
     assert FixedPoint.strong_eq(product_pos_neg, -fxp(correct))
     mul_l = pos_1 * value_2
     mul_r = value_1 * pos_2
+    assert isinstance(mul_r, FixedPoint)
     assert FixedPoint.strong_eq(mul_l, fxp(correct))
     assert FixedPoint.strong_eq(mul_r, fxp(correct))
 
@@ -289,6 +294,7 @@ def test_division(
     assert FixedPoint.strong_eq(quotient_pos_neg, -fxp(correct))
     div_l = pos_1 / value_2
     div_r = value_1 / pos_2
+    assert isinstance(div_r, FixedPoint)
     assert FixedPoint.strong_eq(div_l, fxp(correct))
     assert FixedPoint.strong_eq(div_r, fxp(correct))
 

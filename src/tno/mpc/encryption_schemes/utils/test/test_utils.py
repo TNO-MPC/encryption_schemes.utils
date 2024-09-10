@@ -2,10 +2,12 @@
 This file contains tests that determine whether the code for utility functions works as expected.
 """
 
+from __future__ import annotations
+
 from functools import reduce
 from math import gcd
 from random import randint
-from typing import Any, List
+from typing import Any
 
 import pytest
 from sympy import isprime
@@ -54,7 +56,7 @@ small_primes = [
 ]
 
 
-def prod(list_: List[Any]) -> Any:
+def prod(list_: list[Any]) -> Any:
     """
     Multiply all elements in a list
 

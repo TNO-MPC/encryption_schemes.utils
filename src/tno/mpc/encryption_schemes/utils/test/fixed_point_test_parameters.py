@@ -1,6 +1,7 @@
 """
 File containing test input for test_fixed_point.py
 """
+
 import numpy as np
 
 from tno.mpc.encryption_schemes.utils.fixed_point import FixedPoint
