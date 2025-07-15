@@ -14,7 +14,7 @@ _This implementation of cryptographic software has not been audited. Use at your
 ## Documentation
 
 Documentation of the `tno.mpc.encryption_schemes.utils` package can be found
-[here](https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.12.3).
+[here](https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.15.0).
 
 ## Install
 
@@ -36,6 +36,7 @@ If you wish to run the tests you can use:
 ```console
 $ python -m pip install 'tno.mpc.encryption_schemes.utils[tests]'
 ```
+
 _Note:_ A significant performance improvement can be achieved by installing the GMPY2 library.
 
 ```console

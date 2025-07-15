@@ -5,9 +5,11 @@ Root imports for the tno.mpc.encryption_schemes.utils package.
 # Explicit re-export of all functionalities, such that they can be imported properly. Following
 # https://www.python.org/dev/peps/pep-0484/#stub-files and
 # https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-no-implicit-reexport
+from __future__ import annotations
+
 import sys
 import warnings
-from typing import Optional, TextIO, Type, Union
+from typing import TextIO
 
 from tno.mpc.encryption_schemes.utils._check_gmpy2 import USE_GMPY2 as USE_GMPY2
 from tno.mpc.encryption_schemes.utils.fixed_point import FixedPoint as FixedPoint
@@ -20,12 +22,12 @@ from tno.mpc.encryption_schemes.utils.utils import randprime as randprime
 
 
 def custom_showwarning(  # pylint: disable=useless-type-doc
-    message: Union[Warning, str],
-    category: Type[Warning],
+    message: Warning | str,
+    category: type[Warning],
     _filename: str,
     _lineno: int,
-    file: Optional[TextIO] = None,
-    _line: Optional[str] = None,
+    file: TextIO | None = None,
+    _line: str | None = None,
 ) -> None:
     """
     Custom warning formatter and printer for python warnings. Prints category and message to
@@ -40,4 +42,4 @@ def custom_showwarning(  # pylint: disable=useless-type-doc
 
 warnings.showwarning = custom_showwarning  # type: ignore[assignment]
 
-__version__ = "0.12.3"
+__version__ = "0.15.0"

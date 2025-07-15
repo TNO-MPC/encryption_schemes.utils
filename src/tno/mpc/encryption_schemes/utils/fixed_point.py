@@ -580,6 +580,27 @@ class FixedPoint:
         rounded_scaled_value = sign * (scaled_value + correction)
         return rounded_scaled_value
 
+    def __round__(self, ndigits: int = 0) -> FixedPoint:
+        """
+        Round the fixed point number up to the given number of digits.
+
+        >>> round(fxp("3.14"))
+        fxp("3.00")
+        >>> round(fxp("3.14"), 1)
+        fxp("3.1")
+        >>> round(fxp("1234"), -1)
+        fxp("1230")
+
+        :param ndigits: Number of digits to round on. Can be negative.
+        :return: Rounded fixed point number.
+        """
+        new_value = self.round_to_precision(self.value, self.precision, ndigits)
+        if ndigits < 0:
+            rounded_fxp = FixedPoint(new_value * 10**-ndigits, 0)
+        else:
+            rounded_fxp = FixedPoint(new_value, ndigits)
+        return FixedPoint.fxp(rounded_fxp, self.precision)
+
     def __mul__(self, other: object) -> FixedPoint:
         """
         Multiply another fixed point number (or type convertible to a fixed point number) with self.
@@ -615,6 +636,33 @@ class FixedPoint:
         return FixedPoint(scaled_mult, max_precision)
 
     __rmul__ = __mul__
+
+    def __mod__(self, other: object) -> FixedPoint:
+        """
+        The remainder after the division of self by the fixed point number (or type convertible to a fixed point number).
+        The result has the same sign as the `other` fixed point number.
+
+        :param other: a fixed pont number, integer, string or float
+        :raise ZeroDivisionError: If the other object is 0
+        :return: The remainder after self is divided by other
+        """
+        if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
+            return NotImplemented
+        other_ = FixedPoint.fxp(other)
+        max_precision, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
+        return FixedPoint(cal_self.value % cal_other.value, max_precision)
+
+    def __rmod__(self, other: object) -> FixedPoint:
+        """
+        Reflected modular division.
+
+        :param other: a fixed pont number, integer, string or float
+        :raise ZeroDivisionError: If the other object is 0
+        :return: The remainder after self is divided by other
+        """
+        if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
+            return NotImplemented
+        return FixedPoint.fxp(other) % self
 
     def __truediv__(self, other: object) -> FixedPoint:
         """

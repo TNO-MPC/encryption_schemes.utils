@@ -4,7 +4,7 @@ This file contains tests that determine whether the code for fixed points works 
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 import pytest
 
@@ -16,15 +16,17 @@ from tno.mpc.encryption_schemes.utils.test.fixed_point_test_parameters import (
     comp_list,
     comp_list_incorrect,
     division_list,
+    dunder_round_list,
     float_params,
     fxp_params,
     int_params,
+    modulo_list,
     multiplication_list,
     rand_list,
     repr_params,
     round_list,
     string_params,
-    sub_add_mul_div_list_wrong_type,
+    sub_add_mul_div_mod_list_wrong_type,
     subtraction_list,
     to_bool_params,
     to_float_params,
@@ -156,7 +158,7 @@ def test_addition(
 
 
 @pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_list_wrong_type
+    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
 )
 def test_addition_wrong_type(
     value_correct_type: FxpInputType,
@@ -198,7 +200,7 @@ def test_subtraction(
 
 
 @pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_list_wrong_type
+    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
 )
 def test_subtraction_wrong_type(
     value_correct_type: FxpInputType,
@@ -249,7 +251,7 @@ def test_multiplication(
 
 
 @pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_list_wrong_type
+    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
 )
 def test_multiplication_wrong_type(
     value_correct_type: FxpInputType,
@@ -300,7 +302,7 @@ def test_division(
 
 
 @pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_list_wrong_type
+    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
 )
 def test_division_wrong_type(
     value_correct_type: FxpInputType,
@@ -317,6 +319,49 @@ def test_division_wrong_type(
 
     with pytest.raises(NotImplementedError):
         _ = value_wrong_type / fxp(value_correct_type)
+
+
+@pytest.mark.parametrize("value_1, value_2, correct", modulo_list)
+def test_modulo(value_1: FxpInputType, value_2: FxpInputType, correct: str) -> None:
+    """
+    Test to determine whether modulo works properly between two fixed points and fixed
+    points and other compatible data types (integer, string, float).
+
+    :param value_1: input for the FixedPoint.fxp function
+    :param value_2: input for the FixedPoint.fxp function
+    :param correct: Correct output of fxp(value_1) / fxp(value_2)
+    """
+    result = fxp(value_1) % value_2
+    assert FixedPoint.strong_eq(result, fxp(correct))
+    if isinstance(value_1, str):
+        value_1 = float(fxp(value_1))
+    result2 = cast(FixedPoint, value_1 % fxp(value_2))
+    assert FixedPoint.strong_eq(result2, fxp(correct))
+
+
+@pytest.mark.parametrize(
+    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
+)
+def test_modulo_incorrect_type(
+    value_correct_type: FxpInputType,
+    value_wrong_type: FxpInputType,
+) -> None:
+    """
+    Test to determine whether modulo correctly identifies incompatible types
+
+    :param value_correct_type: input for the FixedPoint.fxp function
+    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
+    """
+    with pytest.raises(TypeError):
+        fxp(value_correct_type) % value_wrong_type
+
+
+def test_modulo_zero_error() -> None:
+    """
+    Test to determine if an error is thrown on modulo 0
+    """
+    with pytest.raises(ZeroDivisionError):
+        _ = fxp(10) % 0
 
 
 @pytest.mark.parametrize("operator, value_1, value_2, correct", comp_list)
@@ -405,6 +450,25 @@ def test_round_to_precision(
         integer_representation, current_precision, target_precision
     )
     assert result == correct_answer
+
+
+@pytest.mark.parametrize(
+    "value, precision, correct_answer",
+    dunder_round_list,
+)
+def test_dunder_round(
+    value: FixedPoint,
+    precision: None | int,
+    correct_answer: FixedPoint,
+) -> None:
+    """
+    Test whether the __round__ function works properly
+
+    :param value: value-part of the fixed-point number
+    :param precision: requested precision by round(_, ndigits) function
+    :param correct_answer: the expected result
+    """
+    assert round(value, precision) == correct_answer
 
 
 @pytest.mark.parametrize("input_value, correct_output", repr_params)
