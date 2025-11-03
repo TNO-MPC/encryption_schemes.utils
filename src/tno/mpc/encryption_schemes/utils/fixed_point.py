@@ -779,3 +779,7 @@ try:
     )
 except ModuleNotFoundError:
     pass
+except ImportError as exc:
+    raise ImportError(
+        "Detected an incompatible version of 'tno.mpc.communication'. Please install this package with the extra 'communication', e.g. 'tno.mpc.encryption_schemes.utils[communication]'."
+    )

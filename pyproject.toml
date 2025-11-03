@@ -26,7 +26,7 @@ classifiers = [
     "Typing :: Typed",
     "Topic :: Security :: Cryptography",
 ]
-urls = { Homepage = "https://pet.tno.nl/", Documentation = "https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.16.0", Source = "https://github.com/TNO-MPC/encryption_schemes.utils" }
+urls = { Homepage = "https://pet.tno.nl/", Documentation = "https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.16.1", Source = "https://github.com/TNO-MPC/encryption_schemes.utils" }
 dynamic = ["version"]
 requires-python = ">=3.9"
 dependencies = [
@@ -80,7 +80,7 @@ namespace_packages = true
 explicit_package_bases = true
 
 [tool.tbump.version]
-current = "0.16.0"
+current = "0.16.1"
 regex = '''
 \d+\.\d+\.\d+(-(.*))?
 '''
