@@ -6,6 +6,8 @@ import copy
 
 import pytest
 
+from tno.mpc.communication.packers import DefaultDeserializerOpts, DefaultSerializerOpts
+
 from tno.mpc.encryption_schemes.utils.fixed_point import FixedPoint
 from tno.mpc.encryption_schemes.utils.test.fixed_point_test_parameters import (
     string_params,
@@ -26,5 +28,7 @@ def test_floating_point_serialization(
         representation, to test the serialization logic on
     """
     obj = copy.deepcopy(true_fxp)
-    obj_prime = FixedPoint.deserialize(obj.serialize())
+    obj_prime = FixedPoint.deserialize(
+        obj.serialize(opts=DefaultSerializerOpts), opts=DefaultDeserializerOpts
+    )
     assert obj == obj_prime

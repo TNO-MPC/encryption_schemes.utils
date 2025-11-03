@@ -24,7 +24,7 @@ from tno.mpc.encryption_schemes.utils.utils import (
 )
 
 if USE_GMPY2:
-    from gmpy2 import mpz
+    import gmpy2
 
 small_primes = [
     2,
@@ -87,7 +87,7 @@ def test_randprime_regular_behaviour(low: int, high: int) -> None:
     assert isprime(prime)
     assert low <= prime < high
     if USE_GMPY2:
-        assert isinstance(prime, type(mpz(0)))
+        assert isinstance(prime, gmpy2.mpz)
     else:
         assert isinstance(prime, int)
 
@@ -125,7 +125,7 @@ def test_next_prime(low: int) -> None:
 
     # check type correctness
     if USE_GMPY2:
-        assert isinstance(prime, type(mpz(0)))
+        assert isinstance(prime, gmpy2.mpz)
     else:
         assert isinstance(prime, int)
 
@@ -167,7 +167,7 @@ def test_lcm(nr_of_primes: int) -> None:
     value_2 = prod([primes[i] ** powers_2[i] for i in range(nr_of_primes)])
     correct_lcm = prod([primes[i] ** lcm_powers[i] for i in range(nr_of_primes)])
     if USE_GMPY2:
-        utils_lcm_value = lcm(mpz(value_1), mpz(value_2))
+        utils_lcm_value = lcm(gmpy2.mpz(value_1), gmpy2.mpz(value_2))
     else:
         utils_lcm_value = lcm(value_1, value_2)
     assert correct_lcm == utils_lcm_value

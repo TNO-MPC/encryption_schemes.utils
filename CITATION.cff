@@ -18,5 +18,5 @@ contact:
 repository-code: https://github.com/TNO-MPC/encryption_schemes.utils
 repository-artifact: https://pypi.org/project/tno.mpc.encryption_schemes.utils
 title: TNO PET Lab - secure Multi-Party Computation (MPC) - Encryption Schemes - Utils
-version: 0.15.0
-date-released: 2025-07-15
+version: 0.16.0
+date-released: 2025-11-04

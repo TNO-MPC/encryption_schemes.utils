@@ -17,6 +17,11 @@ try:
 except ImportError:
     SUPPORT_NUMPY = False
 
+try:
+    from tno.mpc.communication.packers import DeserializerOpts, SerializerOpts
+except ImportError:
+    pass
+
 FxpInputType = Union["FixedPoint", numbers.Integral, str, float]
 
 
@@ -384,12 +389,9 @@ class FixedPoint:
 
         :param other: Fixed point object, integer, string or float
         :return: whether self and the other object are (weakly) equal
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         if isinstance(other, FixedPoint):
             if self.precision != other.precision:
                 _, (cal_self, cal_other) = FixedPoint.calibrate(self, other)
@@ -424,12 +426,9 @@ class FixedPoint:
 
         :param other: fixed point number, integer, string or float
         :return: whether self is greater than the fixed point version of other
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         _, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return cal_self.value > cal_other.value
@@ -441,12 +440,9 @@ class FixedPoint:
 
         :param other: fixed point number, integer, string or float
         :return: whether self is greater than or equal to the fixed point version of other
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         _, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return cal_self.value >= cal_other.value
@@ -458,12 +454,9 @@ class FixedPoint:
 
         :param other: fixed point number, integer, string or float
         :return: whether self is less than the fixed point version of other
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         _, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return cal_self.value < cal_other.value
@@ -475,12 +468,9 @@ class FixedPoint:
 
         :param other: fixed point number, integer, string or float
         :return: whether self is less than or equal to the fixed point version of other
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         _, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return cal_self.value <= cal_other.value
@@ -500,12 +490,9 @@ class FixedPoint:
 
         :param other: a fixed point number, integer, string or float
         :return: the result of subtracting the other value from self
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         max_precision, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return FixedPoint(cal_self.value - cal_other.value, max_precision)
@@ -516,12 +503,9 @@ class FixedPoint:
 
         :param other: a fixed point number, integer, string or float
         :return: the result of subtracting self from the other value
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other, self.precision)
         return other_ - self
 
@@ -531,12 +515,9 @@ class FixedPoint:
 
         :param other: a fixed pont number, integer, string or float
         :return: The addition of self to other
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
         max_precision, (cal_self, cal_other) = FixedPoint.calibrate(self, other_)
         return FixedPoint(cal_self.value + cal_other.value, max_precision)
@@ -614,12 +595,9 @@ class FixedPoint:
 
         :param other: a fixed point number or other type convertible to a fixed point number.
         :return: a * b
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
 
         max_precision = max(self.precision, other_.precision)
@@ -677,12 +655,9 @@ class FixedPoint:
 
         :param other: a fixed point number or other type convertible to a fixed point number.
         :return: a / b
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         other_ = FixedPoint.fxp(other)
 
         max_precision = max(self.precision, other_.precision)
@@ -714,12 +689,9 @@ class FixedPoint:
 
         :param other: a fixed point number or other type convertible to a fixed point number.
         :return: a / b
-        :raise NotImplementedError: If the other object does not have a compatible type.
         """
         if not isinstance(other, (str, numbers.Integral, float, FixedPoint)):
-            raise NotImplementedError(
-                "The compatible object types are string, integer, float and FixedPoint."
-            )
+            return NotImplemented
         return FixedPoint.fxp(other).__truediv__(self)
 
     def __rshift__(self, other: int) -> FixedPoint:
@@ -774,11 +746,11 @@ class FixedPoint:
             value *= sign
         return FixedPoint(value, max_precision)
 
-    def serialize(self, **_kwargs: Any) -> dict[str, Any]:
-        r"""
+    def serialize(self, opts: SerializerOpts) -> dict[str, Any]:
+        """
         Serialization function for FixedPoint.
 
-        :param \**_kwargs: Optional extra keyword arguments.
+        :param opts: Serialization options.
         :return: Serialized representation of the current object.
         """
         return {
@@ -787,24 +759,21 @@ class FixedPoint:
         }
 
     @staticmethod
-    def deserialize(obj: dict[str, Any], **_kwargs: Any) -> FixedPoint:
-        r"""
+    def deserialize(obj: dict[str, Any], opts: DeserializerOpts) -> FixedPoint:
+        """
         Deserialization function for FixedPoint.
 
         :param obj: Object to deserialize.
-        :param \**_kwargs: Optional extra keyword arguments.
+        :param opts: Deserialization options.
         :return: Deserialized FixedPoint instance.
         """
         return FixedPoint(obj["value"], obj["precision"])
 
 
-# Check to see if the communication module is available
 try:
-    from tno.mpc.communication import Serialization
+    from tno.mpc.communication import Serializer
 
-    # `tno.mpc.protocols.secure_comparison` uses, but does not register, the
-    # serialization functions for `FixedPoint`.
-    Serialization.register_class(
+    Serializer.register_class(
         FixedPoint,
         overwrite=True,
     )

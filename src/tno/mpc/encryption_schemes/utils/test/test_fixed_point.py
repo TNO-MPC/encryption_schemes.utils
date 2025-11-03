@@ -14,7 +14,6 @@ from tno.mpc.encryption_schemes.utils.test.fixed_point_test_parameters import (
     addition_list,
     cal_list,
     comp_list,
-    comp_list_incorrect,
     division_list,
     dunder_round_list,
     float_params,
@@ -157,26 +156,6 @@ def test_addition(
     assert FixedPoint.strong_eq(sum_r, correct_fxp)
 
 
-@pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
-)
-def test_addition_wrong_type(
-    value_correct_type: FxpInputType,
-    value_wrong_type: FxpInputType,
-) -> None:
-    """
-    Test to determine whether addition correctly identifies incompatible types.
-
-    :param value_correct_type: input for the FixedPoint.fxp function
-    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
-    """
-    with pytest.raises(NotImplementedError):
-        _ = fxp(value_correct_type) + value_wrong_type
-
-    with pytest.raises(NotImplementedError):
-        _ = value_wrong_type + fxp(value_correct_type)
-
-
 @pytest.mark.parametrize("value_1, value_2, correct", subtraction_list)
 def test_subtraction(
     value_1: FxpInputType, value_2: FxpInputType, correct: FixedPoint
@@ -197,26 +176,6 @@ def test_subtraction(
     assert FixedPoint.strong_eq(sub_, correct_fxp)
     assert FixedPoint.strong_eq(sub_l, correct_fxp)
     assert FixedPoint.strong_eq(sub_r, correct_fxp)
-
-
-@pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
-)
-def test_subtraction_wrong_type(
-    value_correct_type: FxpInputType,
-    value_wrong_type: FxpInputType,
-) -> None:
-    """
-    Test to determine whether subtraction correctly identifies incompatible types
-
-    :param value_correct_type: input for the FixedPoint.fxp function
-    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
-    """
-    with pytest.raises(NotImplementedError):
-        _ = fxp(value_correct_type) - value_wrong_type
-
-    with pytest.raises(NotImplementedError):
-        _ = value_wrong_type - fxp(value_correct_type)
 
 
 @pytest.mark.parametrize("value_1, value_2, correct", multiplication_list)
@@ -250,26 +209,6 @@ def test_multiplication(
     assert FixedPoint.strong_eq(mul_r, fxp(correct))
 
 
-@pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
-)
-def test_multiplication_wrong_type(
-    value_correct_type: FxpInputType,
-    value_wrong_type: FxpInputType,
-) -> None:
-    """
-    Test to determine whether multiplication correctly identifies incompatible types
-
-    :param value_correct_type: input for the FixedPoint.fxp function
-    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
-    """
-    with pytest.raises(NotImplementedError):
-        _ = fxp(value_correct_type) * value_wrong_type
-
-    with pytest.raises(NotImplementedError):
-        _ = value_wrong_type * fxp(value_correct_type)
-
-
 @pytest.mark.parametrize("value_1, value_2, correct", division_list)
 def test_division(
     value_1: FxpInputType, value_2: FxpInputType, correct: FixedPoint
@@ -299,26 +238,6 @@ def test_division(
     assert isinstance(div_r, FixedPoint)
     assert FixedPoint.strong_eq(div_l, fxp(correct))
     assert FixedPoint.strong_eq(div_r, fxp(correct))
-
-
-@pytest.mark.parametrize(
-    "value_correct_type, value_wrong_type", sub_add_mul_div_mod_list_wrong_type
-)
-def test_division_wrong_type(
-    value_correct_type: FxpInputType,
-    value_wrong_type: FxpInputType,
-) -> None:
-    """
-    Test to determine whether division correctly identifies incompatible types
-
-    :param value_correct_type: input for the FixedPoint.fxp function
-    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
-    """
-    with pytest.raises(NotImplementedError):
-        _ = fxp(value_correct_type) / value_wrong_type
-
-    with pytest.raises(NotImplementedError):
-        _ = value_wrong_type / fxp(value_correct_type)
 
 
 @pytest.mark.parametrize("value_1, value_2, correct", modulo_list)
@@ -383,29 +302,6 @@ def test_comparison_correct_type(
     assert operator(fxp(value_1), fxp(value_2)) == correct
     assert operator(fxp(value_1), value_2) == correct
     assert operator(value_1, fxp(value_2)) == correct
-
-
-@pytest.mark.parametrize(
-    "operator, value_correct_type, value_wrong_type", comp_list_incorrect
-)
-def test_comparison_incorrect_type(
-    operator: Callable[[FxpInputType, FxpInputType], bool],
-    value_correct_type: FxpInputType,
-    value_wrong_type: FxpInputType,
-) -> None:
-    """
-    Test to determine whether all boolean operators properly identify incompatible types.
-
-    :param operator: function that takes two compatible fxp input values and returns a boolean
-    :param value_correct_type: input for the FixedPoint.fxp function
-    :param value_wrong_type: input for the FixedPoint.fxp function of the wrong type
-    """
-
-    with pytest.raises(NotImplementedError):
-        _ = operator(fxp(value_correct_type), value_wrong_type)
-
-    with pytest.raises(NotImplementedError):
-        _ = operator(value_wrong_type, fxp(value_correct_type))
 
 
 @pytest.mark.parametrize("low, high, signed", rand_list)

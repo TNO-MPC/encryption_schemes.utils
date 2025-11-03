@@ -26,7 +26,7 @@ classifiers = [
     "Typing :: Typed",
     "Topic :: Security :: Cryptography",
 ]
-urls = { Homepage = "https://pet.tno.nl/", Documentation = "https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.15.0", Source = "https://github.com/TNO-MPC/encryption_schemes.utils" }
+urls = { Homepage = "https://pet.tno.nl/", Documentation = "https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.16.0", Source = "https://github.com/TNO-MPC/encryption_schemes.utils" }
 dynamic = ["version"]
 requires-python = ">=3.9"
 dependencies = [
@@ -35,15 +35,17 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+communication = [
+    "tno.mpc.communication~=5.0",
+]
 gmpy = [
     "gmpy2>=2.1.3",
+    "importlib_metadata>=2.1,<9; python_version<'3.10'",
 ]
 tests = [
     "numpy",
     "pytest>=8.1",
-]
-communication = [
-    "tno.mpc.communication",
+    "tno.mpc.encryption_schemes.utils[communication]",
 ]
 
 [tool.setuptools]
@@ -78,7 +80,7 @@ namespace_packages = true
 explicit_package_bases = true
 
 [tool.tbump.version]
-current = "0.15.0"
+current = "0.16.0"
 regex = '''
 \d+\.\d+\.\d+(-(.*))?
 '''

@@ -7,11 +7,17 @@ set USE_GMPY2 to True. Otherwise, USE_GMPY2 is False.
 """
 
 import re
+import sys
 import warnings
-from importlib.metadata import PackageNotFoundError, requires, version
+from importlib.metadata import PackageNotFoundError, version
 
 from packaging.specifiers import SpecifierSet
 from packaging.version import parse
+
+if sys.version_info < (3, 10):
+    from importlib_metadata import requires
+else:
+    from importlib.metadata import requires
 
 SPECIFIER_OPERATOR = "===|==|!=|~=|<=|>=|<|>"
 SPECIFIER_REGEX = rf"(?:{SPECIFIER_OPERATOR})\s*[\w\.\*]*"

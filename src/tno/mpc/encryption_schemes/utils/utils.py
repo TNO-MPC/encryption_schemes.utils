@@ -4,7 +4,6 @@ Useful functions for creating encryption schemes.
 
 from __future__ import annotations
 
-import sys
 from math import gcd
 
 import sympy
@@ -13,10 +12,6 @@ from tno.mpc.encryption_schemes.utils._check_gmpy2 import USE_GMPY2
 
 if USE_GMPY2:
     import gmpy2
-
-USE_ALTERNATIVE_POW_MOD = sys.version_info.major < 3 or (
-    sys.version_info.major == 3 and sys.version_info.minor < 8
-)
 
 
 def randprime(low: int, high: int) -> int:
@@ -62,9 +57,6 @@ def pow_mod(base: int, exponent: int, modulus: int) -> int:
     """
     if USE_GMPY2:
         return gmpy2.powmod(base, exponent, modulus)
-    if USE_ALTERNATIVE_POW_MOD and exponent < 0:
-        return pow(mod_inv(base, modulus), -exponent, modulus)
-    # else
     return pow(base, exponent, modulus)
 
 

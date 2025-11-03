@@ -14,7 +14,7 @@ _This implementation of cryptographic software has not been audited. Use at your
 ## Documentation
 
 Documentation of the `tno.mpc.encryption_schemes.utils` package can be found
-[here](https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.15.0).
+[here](https://docs.pet.tno.nl/mpc/encryption_schemes/utils/0.16.0).
 
 ## Install
 
